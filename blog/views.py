@@ -10,6 +10,9 @@ def blogHome(request):
 
 def blogPost(request, slug):
     post=Post.objects.filter(slug=slug).first()
+    post.views = post.views + 1
+    post.save()
+    
     comments = BlogComment.objects.filter(post=post)
     context={"post":post,"comments":comments,'user': request.user}
     return render(request, "blog/blogPost.html", context)
@@ -20,6 +23,7 @@ def postComment(request):
         user = request.user
         postSno = request.POST.get("postSno")
         post = Post.objects.get(sno = postSno)
+        parentSno = request.POST.get("parentSno")
 
         comment = BlogComment(comment=comment, user=user,post=post)
         comment.save()
